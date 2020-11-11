@@ -1,7 +1,8 @@
-const { getAllProjectModel, getAllProjectByIdModel, createProjectModel } = require('../models/project')
+const { getAllProjectModel, getProjectByIdModel, createProjectModel } = require('../models/project')
+
 module.exports = {
   getAllProject: (req, res) => {
-    const { search, limit, page } = req.query
+    let { search, limit, page } = req.query
     let searchKey = ''
     let searchValue = ''
 
@@ -31,62 +32,61 @@ module.exports = {
       if (result.length) {
         res.status(200).send({
           success: true,
-          message: 'Project list',
+          message: 'Project List',
           data: result
         })
       } else {
         res.status(404).send({
           success: false,
-          message: 'item not found'
+          message: 'Item project not found!'
         })
       }
     })
   },
-getProjectById: async (req, res) => {
+  getProjectById: async (req, res) => {
     try {
       const { projectId } = req.params
 
-      const result = await getAllProjectByIdModel(projectId)
+      const result = await getProjectByIdModel(projectId)
       if (result.length) {
         res.status(200).send({
           success: true,
           message: `Project with id ${projectId}`,
           data: result[0]
         })
-      }else {
+      } else {
         res.status(404).send({
           success: false,
-          message: 'Data With id' + projectId + 'not found'
+          message: 'Data project with id ' + projectId + ' not found'
         })
       }
     } catch (error) {
       console.log(error)
       req.status(500).send({
         success: false,
-        message: 'Internal Server Error!'
+        message: 'Internal server error!'
       })
     }
   },
   createProject: async (req, res) => {
     try {
-      const { projecName, projecDesc, projectType } = req.body
+      const { projectName, projectDesc, projectType } = req.body
       const result = await createProjectModel(projectName, projectDesc, projectType)
-
       if (result.affectedRows) {
         res.status(200).send({
           success: true,
-          message: 'Success Add Data'
+          message: 'Success add project!'
         })
-      }else {
-        res.status(404).send({
+      } else {
+        res.status(400).send({
           success: false,
-          message: 'Submit Data Failed !'
+          message: 'Submit project failed!'
         })
       }
     } catch (error) {
       res.status(500).send({
         success: false,
-        message: 'internal server eror'
+        message: 'Internal Server Error!'
       })
     }
   }
