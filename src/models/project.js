@@ -34,26 +34,39 @@ module.exports = {
       })
     })
   },
-  putProjectByIdModel: function (projectId, req) {
+  deleteProjectModel: (projectId) => {
     return new Promise((resolve, reject) => {
-      const { projectId } = req.params
-      const { projectName, projectDesc, projectType } = req.body
-      const query = `SELECT * FROM project WHERE project_id = ${projectId}`
-      const queryPut = `UPDATE project SET project_name = '${projectName}', '${projectDesc}', '${projectType}'`
-
-      if (projectName.trim() && projectDesc.trim() && projectType.trim()) {
-        db.query(query, (err, result, fields) => {
-          if (result.length) {
-            db.queryPut(queryPut, (_err, result, fields) => {
-              if (!err) {
-                resolve(result)
-              } else {
-                reject(new Error(err))
-              }
-            })
-          }
-        })
-      }
+      db.query(`DELETE FROM project WHERE project_id = ${projectId}`, (err, result, _fields) => {
+        if (!err) {
+          resolve(result)
+        } else {
+          reject(new Error(err))
+        }
+      })
+    })
+  },
+  putProjectModel: (projectName, projectDesc, projectType, projectId) => {
+    return new Promise((resolve, reject) => {
+      const queryUpdate = `UPDATE project SET project_name = '${projectName}', project_desc = '${projectDesc}', project_type = '${projectType}' WHERE project_id = ${projectId}`
+      db.query(queryUpdate, (err, result, _fields) => {
+        if (!err) {
+          resolve(result)
+        } else {
+          reject(new Error(err))
+        }
+      })
+    })
+  },
+  patchProjectModel: (dataColumn, projectId) => {
+    return new Promise((resolve, reject) => {
+      const queryUpdate = `UPDATE project SET ${dataColumn} WHERE project_id = ${projectId}`
+      db.query(queryUpdate, (err, result, _fields) => {
+        if (!err) {
+          resolve(result)
+        } else {
+          reject(new Error(err))
+        }
+      })
     })
   }
 }
